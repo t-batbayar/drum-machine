@@ -15,12 +15,13 @@ const DrumPad = (props) => (
 	</div>
 )
 
-const Controls = (props) => (
-	<div className="controls">
+const Controller = (props) => (
+	<div className="controller">
 		<div id="display">
 			{ props.displayText }
 		</div>
 		<div className="volume-slider">
+			<div className="volume">Volume: { props.volume * 100 }</div>
 			<input 
 				type="range" 
 				min="1" 
@@ -28,10 +29,12 @@ const Controls = (props) => (
 				value={ props.volume * 100 } 
 				onChange={ e => props.handleVolumeChange(e) } 
 			/>
-			{ props.volume * 100 }
 		</div>
 		<div className="audio-kit-selector">
-			<select value={ props.selectedKitName } onChange={ (e) => props.handleChangeKit(e) } >
+			<select 
+				className="kit-selector"
+				value={ props.selectedKitName } 
+				onChange={ (e) => props.handleChangeKit(e) } >
 				{ 
 					Object.keys(props.kits)
 						.map(kit => (
@@ -117,7 +120,7 @@ class DrumMachine extends React.Component {
 						}) 
 					}
 				</div>
-				<Controls 
+				<Controller 
 					displayText={ this.state.displayText } 
 					volume={ this.state.volume } 
 					handleVolumeChange={ this.handleVolumeChange } 
@@ -131,7 +134,7 @@ class DrumMachine extends React.Component {
 }
 
 const Wrapper = () => (
-	<div>
+	<div id="wrapper">
 		<DrumMachine />
 	</div>
 )
