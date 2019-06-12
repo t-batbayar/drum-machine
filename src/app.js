@@ -98,7 +98,7 @@ class DrumMachine extends React.Component {
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('keydown');
+		document.removeEventListener('keydown', this.handleKeyDown);
 	}
 
 	handlePlayAudio = (id, audio) => {
