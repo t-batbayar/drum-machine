@@ -52,7 +52,7 @@ const Controller = (props) => (
 			{ props.displayText }
 		</div>
 		<div className="volume-slider">
-			<div className="volume">Volume: { props.volume * 100 }</div>
+			<div className="volume">Volume: { Math.floor(props.volume * 100) }</div>
 			<input 
 				type="range" 
 				min="1" 
@@ -133,30 +133,26 @@ class DrumMachine extends React.Component {
 
 	render() {
 		return (
-			<div id="drum-machine">
-				<div className="pads">
-					{this.state.selectedKit.map(pad => (
-						<DrumPad key={ pad.audio } {...pad} handlePlayAudio={ this.handlePlayAudio } volume={ this.state.volume } />
-					))}
+			<div id="wrapper">
+				<div id="drum-machine">
+					<div className="pads">
+						{this.state.selectedKit.map(pad => (
+							<DrumPad key={ pad.audio } {...pad} handlePlayAudio={ this.handlePlayAudio } volume={ this.state.volume } />
+						))}
+					</div>
+					<Controller 
+						displayText={ this.state.displayText } 
+						volume={ this.state.volume } 
+						handleVolumeChange={ this.handleVolumeChange } 
+						kits={ this.state.kits } 
+						selectedKitName={ this.state.selectedKitName }
+						handleChangeKit={ this.handleChangeKit }
+					/>
 				</div>
-				<Controller 
-					displayText={ this.state.displayText } 
-					volume={ this.state.volume } 
-					handleVolumeChange={ this.handleVolumeChange } 
-					kits={ this.state.kits } 
-					selectedKitName={ this.state.selectedKitName }
-					handleChangeKit={ this.handleChangeKit }
-				/>
 			</div>
 		)
 	}
 }
-
-const Wrapper = () => (
-	<div id="wrapper">
-		<DrumMachine />
-	</div>
-)
 
 const kits = {
 	HeatherKit: [
@@ -255,4 +251,4 @@ const kits = {
 	]
 }
 
-ReactDOM.render(<Wrapper />, document.getElementById('app'));
+ReactDOM.render(<DrumMachine />, document.getElementById('app'));
