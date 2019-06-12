@@ -4,16 +4,47 @@ import ReactDOM from 'react-dom';
 import 'normalize.css';
 import './styles/styles.scss';
 
-const DrumPad = (props) => (
-	<div 
-		className="drum-pad" 
-		id={ props.audio } 
-		onClick={ () => props.handlePlayAudio(props.button, props.audio) }
-	>
-		<audio src={ props.audioLink } className="clip" id={ props.button }></audio>
-		{ props.button }
-	</div>
-)
+class DrumPad extends React.Component {
+	constructor(props) {
+		super(props);
+		this.audioNode = React.createRef();
+	}
+
+	componentDidMount() {
+		this.audioNode.current.volume = this.props.volume;
+	}
+
+	componentDidUpdate() {
+		this.audioNode.current.volume = this.props.volume;
+	}
+
+	shouldComponentUpdate(nextProps) {
+		if (this.props.audio === nextProps.audio &&
+			this.props.audioLink === nextProps.audioLink &&
+			this.props.volume === nextProps.volume) {
+				return false;
+			} else {
+				return true;
+			}
+	}
+
+	render() {
+		return (
+			<div className="drum-pad"
+				id={ this.props.audio }
+				onClick={ () => this.props.handlePlayAudio(this.props.button, this.props.audio) }
+			>
+				<audio 
+					ref={ this.audioNode }
+					src={ this.props.audioLink } 
+					className="clip" 
+					id={ this.props.button }
+				></audio>
+				{ this.props.button }
+			</div>
+		)
+	}
+}
 
 const Controller = (props) => (
 	<div className="controller">
@@ -35,14 +66,12 @@ const Controller = (props) => (
 				className="kit-selector"
 				value={ props.selectedKitName } 
 				onChange={ (e) => props.handleChangeKit(e) } >
-				{ 
-					Object.keys(props.kits)
-						.map(kit => (
-								<option key={ kit } value={ kit }>
-									{ kit.split(/(?=[A-Z])/).join(' ') }
-								</option>
-							)
-						) 
+				{ Object.keys(props.kits)
+					.map(kit => (
+						<option key={ kit } value={ kit }>
+							{ kit.split(/(?=[A-Z])/).join(' ') }
+						</option>
+					))
 				}
 			</select>
 		</div>
@@ -55,7 +84,7 @@ class DrumMachine extends React.Component {
 		selectedKit: [],
 		selectedKitName: '',
 		displayText: '',
-		volume: 0.1,
+		volume: 1,
 		keyEventId: '',
 	}
 
@@ -79,14 +108,8 @@ class DrumMachine extends React.Component {
 	}
 
 	handleVolumeChange = (e) => {
-		const volume = Number.parseFloat(e.target.value / 100).toFixed(1);
+		const volume = Number.parseFloat(e.target.value / 100).toFixed(2);
 		this.setState((e) => ({ volume }));
-		this.setClipsVolume(volume);
-	}
-
-	setClipsVolume = (volume) => {
-		const clips = document.querySelectorAll('audio');
-		clips.forEach(clip => clip.volume = volume);
 	}
 
 	handleChangeKit = (e) => {
@@ -112,13 +135,9 @@ class DrumMachine extends React.Component {
 		return (
 			<div id="drum-machine">
 				<div className="pads">
-					{ 
-						this.state.selectedKit.map(pad => {
-							return (
-								<DrumPad key={ pad.audio } {...pad} handlePlayAudio={ this.handlePlayAudio } />
-							)
-						}) 
-					}
+					{this.state.selectedKit.map(pad => (
+						<DrumPad key={ pad.audio } {...pad} handlePlayAudio={ this.handlePlayAudio } volume={ this.state.volume } />
+					))}
 				</div>
 				<Controller 
 					displayText={ this.state.displayText } 
