@@ -1,7 +1,7 @@
 # Drum Machine
 ### FreeCodeCamp.org front end libraries project
 
-Used React & Sass
+React & Sass
 
 ```
 npm install
